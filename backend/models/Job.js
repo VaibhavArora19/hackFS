@@ -8,7 +8,7 @@ const jobSchema = new Schema({
     polybaseId: {
         type: String,
         required: true,
-    }
+    },
 });
 
 export default mongoose.model("Job", jobSchema);
