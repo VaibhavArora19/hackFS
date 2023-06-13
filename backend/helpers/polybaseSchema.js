@@ -1,6 +1,6 @@
-const { Polybase } = require("@polybase/client");
+import { Polybase } from "@polybase/client";
 
-const createSchema = async () => {
+export const createSchema = async () => {
 
     const db = new Polybase({
         defaultNamespace: 'hackFS-testing'
@@ -42,14 +42,14 @@ const createSchema = async () => {
             id: string;
             contractAddress: string;
             scheduledBy: string;
-            executionCount: number;
-            executionTimeline: number[];
+            executionCount?: number;
+            executionTimeline?: number[];
 
             @index(id);
 
             constructor(id: string, contractAddress: string, scheduledBy: string) {
                 this.id = id;
-                this.contractAddress: contractAddress;
+                this.contractAddress = contractAddress;
                 this.scheduledBy = scheduledBy;
             }
 
@@ -81,4 +81,6 @@ const createSchema = async () => {
         }
 
     `)
+
+    return createResponse;
 };

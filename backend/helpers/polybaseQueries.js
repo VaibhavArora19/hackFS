@@ -8,8 +8,7 @@ export const createDB = () => {
     return db;
 };
 
-export const createTimeBasedJobRecord = 
-async (id, contractAddress, functionName, scheduledBy, params, scheduledTime, scheduledAt) => {
+export const createTimeBasedJobRecord = async (id, contractAddress, functionName, scheduledBy, params, scheduledTime, scheduledAt) => {
     
     const db = createDB();
 

@@ -1,7 +1,52 @@
-exports.postJobHandler = async (req, res, next) => {
-    
+import { createTimeBasedJobRecord, readTimeBasedJobRecord } from "../helpers/polybaseQueries.js";
+import randomstring from "randomstring";
+import Job from "../models/Job.js";
+
+export const postJobHandler = async (req, res, next) => {
+    const { contractAddress, functionName, scheduledBy, params, scheduledTime } = req.body;
+
+    try {
+        const randomId = randomstring.generate() + contractAddress;
+
+        const response = await createTimeBasedJobRecord( randomId, contractAddress, functionName, scheduledBy, params, Number(scheduledTime), Math.floor((Date.now() / 1000)));
+
+        const newJob = new Job({
+            jobType: "timeBased",
+            polybaseId: response.data.id
+        });
+
+        await newJob.save();
+
+        res.status(201).json({ success: true, message: 'Time based job created successfully'});
+
+    } catch (err) {
+        next(err);
+    }
+
+
 };
 
-exports.getJobHandler = async (req, res, next) => {
+export const getJobHandler = async (req, res, next) => {
+    const { id } = req.params;
+
+    try {
+
+        const response = await readTimeBasedJobRecord(id);
+        
+        if(response.data === null) {
+            return res.status(404).json({ success: false, response: "No Job Found!"});
+        }
+
+        res.status(201).json({ success: true, response: response.data });
+    
+    } catch(err) {
+        next(err);
+    }
+
+};
+
+export const getAllJobHandler = async (req, res, next) => {
+    const ids = await Job.find({});
+
 
 };
