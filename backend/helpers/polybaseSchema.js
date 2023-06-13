@@ -11,6 +11,7 @@ export const createSchema = async () => {
         collection timeBasedJob {
             id: string;
             contractAddress: string;
+            ABI: string;
             functionName: string;
             scheduledBy: string;
             params: string[];
@@ -20,10 +21,11 @@ export const createSchema = async () => {
 
             @index(id, scheduledBy);
 
-            constructor(id: string, contractAddress: string, functionName: string, scheduledBy: string,
+            constructor(id: string, contractAddress: string, ABI: string, functionName: string, scheduledBy: string,
             params: string[], scheduledTime: number, scheduledAt: number) {
                 this.id = id;
                 this.contractAddress = contractAddress;
+                this.ABI = ABI;
                 this.functionName = functionName;
                 this.scheduledBy = scheduledBy;
                 this.params = params;
