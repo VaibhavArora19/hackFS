@@ -3,7 +3,7 @@ import { Polybase } from "@polybase/client";
 export const createSchema = async () => {
 
     const db = new Polybase({
-        defaultNamespace: 'hackFS-testing1'
+        defaultNamespace: 'hackFS-testing2'
     });
 
     const createResponse = await db.applySchema(`
@@ -64,13 +64,15 @@ export const createSchema = async () => {
         @public
         collection users {
             id: string; 
-            timeBasedJobs?: timeBasedJob[];
-            customLogicJobs?: customLogicJob[];
+            timeBasedJobs: timeBasedJob[];
+            customLogicJobs: customLogicJob[];
 
             @index(id);
 
             constructor(id: string) {
                 this.id = id;
+                this.timeBasedJobs = [];
+                this.customLogicJobs = [];
             }
 
             addNewTimeBasedJob(newJob: timeBasedJob) {

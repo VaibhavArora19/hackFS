@@ -21,8 +21,8 @@ export const postJobHandler = async (req, res, next) => {
         const account = await Account.findOne({ address: formattedScheduledBy });
 
         if(!account) {
+            console.log('here');
             const response = await createNewUser(formattedScheduledBy);
-            console.log('response is', response);
             if(response.data === null) {
                 throw new Error("Creating a new user failed!");
             }
@@ -36,7 +36,6 @@ export const postJobHandler = async (req, res, next) => {
         }
         //yaha pr atak rha hai saying Add .signer() to populate ctx.publicKey, see: https://polybase.xyz/docs/authentication
         const userResponse = await addTimeBasedJobReference(formattedScheduledBy, randomId);
-        
         if(userResponse.data === null) {
             throw new Error("Adding time based reference failed");
         }

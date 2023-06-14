@@ -2,7 +2,7 @@ import { Polybase } from "@polybase/client";
 
 export const createDB = () => {
     const db = new Polybase({
-        defaultNamespace: 'hackFS-testing1'
+        defaultNamespace: 'hackFS-testing2'
     });
 
     return db;
@@ -88,7 +88,7 @@ export const addTimeBasedJobReference = async (userId, timeBasedJobId) => {
     const db = createDB();
 
     const response = await db.collection("users").record(userId).call("addNewTimeBasedJob", [db.collection("timeBasedJob").record(timeBasedJobId)]);
-
+    console.log("rrr", response.data);
     return response;
 }
 
