@@ -46,7 +46,7 @@ const connectToDataBaseCron = async () => {
 //     await connectToDataBaseCron();
 
 //     const jobIdArray = await Job.find({});
-//     await getAllJobs(jobIdArray);
+//     await executeScheduledJobs(jobIdArray);
 
 //     closeDatabaseConnection();
 // });

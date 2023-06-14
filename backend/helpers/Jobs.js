@@ -1,4 +1,4 @@
-import { getTimeBasedReadInstance } from "./polybaseQueries.js";
+import { getTimeBasedReadInstance, markJobAsExecuted } from "./polybaseQueries.js";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { filecoinHyperspace } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
@@ -38,18 +38,36 @@ export const executeJob = async (jobDetail) => {
     //     chain: filecoinHyperspace,
     //     transport: http()
     // });
+    try {
+        const walletClient = createWalletClient({
+            account: privateKeyToAccount(process.env.PRIVATE_KEY),
+            chain: filecoinHyperspace,
+            transport: http()
+        });
 
-    const walletClient = createWalletClient({
-        account: privateKeyToAccount(process.env.PRIVATE_KEY),
-        chain: filecoinHyperspace,
-        transport: http()
-    });
+        await walletClient.writeContract({
+            address: jobDetail.contractAddress,
+            abi: jobDetail.ABI,
+            functionName: jobDetail.functionName,
+            args: jobDetail.params
+        });
 
-     await walletClient.writeContract({
-        address: jobDetail.contractAddress,
-        abi: jobDetail.ABI,
-        functionName: jobDetail.functionName,
-        args: jobDetail.params
-     })
+
+        await markJobAsExecuted(jobDetail.polybaseId);
+    } catch(err) {
+        console.log("err is", err);
+    }
+}
+
+export const executeScheduledJobs = async (jobIdArray) => {
+    
+    const allJobs = await getAllJobs(jobIdArray);
+
+    const scheduledJobs = filterJobs(allJobs);
+    
+    for(const scheduledJob of scheduledJobs) {
+        await executeJob(scheduledJob);
+    }
+
 
 }

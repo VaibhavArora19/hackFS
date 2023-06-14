@@ -5,7 +5,7 @@ export const createSchemaHandler = async (req, res, next) => {
     try {
         const response = await createSchema();
         
-        res.json({ response: response});
+        res.json({ response: response });
     }catch(err) {
         next(err);
     }
