@@ -43,16 +43,24 @@ export const createSchema = async () => {
         collection customLogicJob {
             id: string;
             contractAddress: string;
+            ABI: string[]
+            value: number;
+            data: string;
             scheduledBy: string;
             executionCount?: number;
             executionTimeline?: number[];
 
-            @index(id);
+            @index(id, scheduledBy);
 
-            constructor(id: string, contractAddress: string, scheduledBy: string) {
+            constructor(id: string, contractAddress: string, ABI: string, scheduledBy: string, value: number, data: string) {
                 this.id = id;
                 this.contractAddress = contractAddress;
+                this.ABI = ABI;
                 this.scheduledBy = scheduledBy;
+                this.value = value;
+                this.data = data;
+                this.executionCount = 0;
+                this.executionTimeline = [];
             }
 
             increaseExecutionCount(executionTime: number) {

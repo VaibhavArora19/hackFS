@@ -1,4 +1,4 @@
-import { createTimeBasedJobRecord, readTimeBasedJobRecord, createNewUser, addTimeBasedJobReference, getUserInfo } from "../helpers/polybaseQueries.js";
+import { createTimeBasedJobRecord, readTimeBasedJobRecordByAddress, readTimeBasedJobRecord, createNewUser, addTimeBasedJobReference, getUserInfo } from "../helpers/polybaseQueries.js";
 import { ethers } from "ethers";
 import randomstring from "randomstring";
 import Job from "../models/Job.js";
@@ -8,11 +8,11 @@ export const postJobHandler = async (req, res, next) => {
     const { contractAddress, functionName, ABI, scheduledBy, params, scheduledTime } = req.body;
 
     try {
-        const randomId = randomstring.generate() + contractAddress;
         const formattedContractAddress = ethers.utils.getAddress(contractAddress);
+        const randomId = randomstring.generate() + formattedContractAddress;
         const formattedScheduledBy = ethers.utils.getAddress(scheduledBy);        
 
-        const response = await createTimeBasedJobRecord( randomId, formattedContractAddress, ABI, functionName, formattedScheduledBy, params, Number(scheduledTime), Math.floor((Date.now() / 1000)));
+        const response = await createTimeBasedJobRecord( randomId, formattedContractAddress, JSON.stringify(ABI), functionName, formattedScheduledBy, params, Number(scheduledTime / 1000), Math.floor((Date.now() / 1000)));
 
         if(response.data === null) {
             throw new Error("Creating a time based job failed!");
@@ -21,7 +21,6 @@ export const postJobHandler = async (req, res, next) => {
         const account = await Account.findOne({ address: formattedScheduledBy });
 
         if(!account) {
-            console.log('here');
             const response = await createNewUser(formattedScheduledBy);
             if(response.data === null) {
                 throw new Error("Creating a new user failed!");
@@ -75,20 +74,13 @@ export const getJobHandler = async (req, res, next) => {
 
 };
 
-export const getAllJobsByUser = async (req, res, next) => {
+export const getTimeBasedJobByUser = async (req, res, next) => {
     const { userAddress } = req.params;
-
     try {
-        const formattedUserAddress = ethers.utils.getAddress(userAddress);
-        
-        const response = await getUserInfo(formattedUserAddress);
+        const jobs = await readTimeBasedJobRecordByAddress(userAddress);
 
-        if(response.data === null) {
-            throw new Error("Something went wrong");
-        }
-
-        res.status(200).json({ success: true, response: response });
-    } catch (err) {
-        next(err);
+        res.status(200).json({ success: true, response: jobs });
+    } catch(err) {
+        next(err)
     }
-};
+}

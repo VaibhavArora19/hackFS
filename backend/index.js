@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 import jobRoutes from "./routes/Jobs.js";
 import schemaRoutes from "./routes/Schema.js";
 import Job from "./models/Job.js";
-import { getAllJobs } from "./helpers/Jobs.js";
+import { executeScheduledJobs } from "./helpers/Jobs.js";
 
 const app = express();
 
@@ -42,14 +42,14 @@ const connectToDataBaseCron = async () => {
     }
 }
 
-// cron.schedule("* * * * *", async () => {
-//     await connectToDataBaseCron();
+cron.schedule("* * * * *", async () => {
+    await connectToDataBaseCron();
 
-//     const jobIdArray = await Job.find({});
-//     await executeScheduledJobs(jobIdArray);
+    const jobIdArray = await Job.find({});
+    await executeScheduledJobs(jobIdArray);
 
-//     closeDatabaseConnection();
-// });
+    closeDatabaseConnection();
+});
 
 app.use((error, req, res, next) => {
     const statusCode = error.statusCode || 500;
