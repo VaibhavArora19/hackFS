@@ -8,7 +8,7 @@ import { sendNotification } from "@/components/Push/index.js";
 import { randomNumber } from "@/components/Drand/index ";
 export default function Home() {
   const [pkpWallet, setPkpWallet] = useState(null);
-  randomNumber(3);
+  randomNumber(8);
   return (
     <div>
       <LIT setPkpWallet={setPkpWallet} />
