@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ensdomains/ensjs": "^3.0.0-alpha.64",
     "@lit-protocol/access-control-conditions": "^2.2.0",
     "@lit-protocol/auth-helpers": "^2.2.11",
     "@lit-protocol/bls-sdk": "^2.2.0",

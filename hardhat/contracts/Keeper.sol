@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/IKeeper.sol";
 
 contract Keeper is Ownable {
     uint256 public fee;
