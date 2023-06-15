@@ -8,11 +8,11 @@ export const postJobHandler = async (req, res, next) => {
     const { contractAddress, functionName, ABI, scheduledBy, params, scheduledTime } = req.body;
 
     try {
-        const randomId = randomstring.generate() + contractAddress;
         const formattedContractAddress = ethers.utils.getAddress(contractAddress);
+        const randomId = randomstring.generate() + formattedContractAddress;
         const formattedScheduledBy = ethers.utils.getAddress(scheduledBy);        
 
-        const response = await createTimeBasedJobRecord( randomId, formattedContractAddress, ABI, functionName, formattedScheduledBy, params, Number(scheduledTime / 1000), Math.floor((Date.now() / 1000)));
+        const response = await createTimeBasedJobRecord( randomId, formattedContractAddress, JSON.stringify(ABI), functionName, formattedScheduledBy, params, Number(scheduledTime / 1000), Math.floor((Date.now() / 1000)));
 
         if(response.data === null) {
             throw new Error("Creating a time based job failed!");

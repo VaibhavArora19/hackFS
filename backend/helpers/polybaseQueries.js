@@ -38,13 +38,13 @@ export const readTimeBasedJobRecordByAddress = async (address) => {
     return response;
 }
 
-export const createCustomJobRecord = async (id, contractAddress, scheduledBy) => {
+export const createCustomJobRecord = async (id, contractAddress, ABI, scheduledBy, value, data) => {
     const db = createDB();
 
     const col = db.collection("customLogicJob");
 
     const response = await col.create([
-        id, contractAddress, scheduledBy
+        id, contractAddress, ABI, scheduledBy, value, data
     ]);
 
     return response;
@@ -88,7 +88,15 @@ export const addTimeBasedJobReference = async (userId, timeBasedJobId) => {
     const db = createDB();
 
     const response = await db.collection("users").record(userId).call("addNewTimeBasedJob", [db.collection("timeBasedJob").record(timeBasedJobId)]);
-    console.log("rrr", response.data);
+
+    return response;
+}
+
+export const addCustomJobReference = async (userId, customBasedJobId) => {
+    const db = createDB();
+
+    const response = await db.collection("users").record(userId).call("addNewCustomLogicJob", [db.collection("customLogicJob").record(customBasedJobId)]);
+
     return response;
 }
 
@@ -96,6 +104,29 @@ export const getUserInfo = async (userAddress) => {
     const db = createDB();
 
     const response = await db.collection("users").record(userAddress).get();
+
+    return response;
+}
+
+export const readCustomJobRecordByAddress = async (userAddress) => {
+    const db = createDB();
+
+    const response = await db.collection("customLogicJob").where("scheduledBy", "==", userAddress).get();
+
+    return response;
+}
+
+export const getCustomJobReadInstance = (id) => {
+    const db = createDB();
+    const instance = db.collection("customLogicJob").record(id).get();
+
+    return instance;
+}
+
+export const increaseExecutionCount = async (id, time) => {
+    const db = createDB();
+
+    const response = await db.collection("customLogicJob").record(id).call("increaseExecutionCount", [time]);
 
     return response;
 }

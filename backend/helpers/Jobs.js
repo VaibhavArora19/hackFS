@@ -1,8 +1,7 @@
-import { getTimeBasedReadInstance, markJobAsExecuted } from "./polybaseQueries.js";
+import { getTimeBasedReadInstance, markJobAsExecuted, getCustomJobReadInstance, increaseExecutionCount } from "./polybaseQueries.js";
 import { createPublicClient, createWalletClient, http } from "viem";
 import { filecoinHyperspace } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { ABI } from "../ERC20ABI.js";
 
 export const getAllJobs = async (jobIdArray) => {
 
@@ -48,7 +47,7 @@ export const executeJob = async (jobDetail) => {
 
         await walletClient.writeContract({
             address: jobDetail.contractAddress,
-            abi: jobDetail.ABI,
+            abi: JSON.parse(jobDetail.ABI),
             functionName: jobDetail.functionName,
             args: jobDetail.params
         });
@@ -71,4 +70,59 @@ export const executeScheduledJobs = async (jobIdArray) => {
     }
 
 
+}
+
+export const getAllCustomJobs = async (jobIdArray) => {
+    const customJobs = await jobIdArray.filter((jobDetail) => jobDetail.jobType === "custom");
+
+    const pendingJobDetails = [];
+
+    for(const singleJob of customJobs) {
+        const readJobDataInstance = getCustomJobReadInstance(singleJob.polybaseId);
+        pendingJobDetails.push(readJobDataInstance);
+    }
+
+    const promiseResponse = await Promise.all(pendingJobDetails);
+
+    const jobDetails = promiseResponse.map((response) => {
+        return response.data
+    })
+
+    return jobDetails;
+};
+
+export const executeCustomJobs = async (jobDetails) => {
+    const allJobs = await getAllCustomJobs(jobIdArray);
+
+    const publicClient = createPublicClient({
+        chain: filecoinHyperspace,
+        transport: http()
+    });
+
+    const walletClient = createWalletClient({
+        account: privateKeyToAccount("0x" + process.env.PRIVATE_KEY),
+        chain: filecoinHyperspace,
+        transport: http()
+    });
+
+    for(const job of allJobs) {
+        const isExecutionNeeded = await publicClient.readContract({
+            address: job.contractAddress,
+            abi: JSON.parse(job.ABI),
+            functionName: 'check',
+        })
+
+        if(isExecutionNeeded) {
+            await walletClient.writeContract({
+                address: "Keeper.sol contract address goes here",
+                abi: "ABI goes here",
+                functionName: "call function goes here",
+                args: "args goes here"
+            });
+
+            await increaseExecutionCount(Date.now() / 1000);
+
+        }
+    }
+    
 }
