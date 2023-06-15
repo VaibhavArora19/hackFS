@@ -5,10 +5,10 @@ import { useState } from "react";
 import { ens } from "@/components/ENS/index.js";
 const inter = Inter({ subsets: ["latin"] });
 import { sendNotification } from "@/components/Push/index.js";
+import { randomNumber } from "@/components/Drand/index ";
 export default function Home() {
   const [pkpWallet, setPkpWallet] = useState(null);
-  console.log(pkpWallet);
-  ens("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045");
+  randomNumber(3);
   return (
     <div>
       <LIT setPkpWallet={setPkpWallet} />
