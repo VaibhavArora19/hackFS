@@ -2,6 +2,7 @@ import { getTimeBasedReadInstance, markJobAsExecuted } from "./polybaseQueries.j
 import { createPublicClient, createWalletClient, http } from "viem";
 import { filecoinHyperspace } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
+import { ABI } from "../ERC20ABI.js";
 
 export const getAllJobs = async (jobIdArray) => {
 
@@ -10,7 +11,7 @@ export const getAllJobs = async (jobIdArray) => {
     const pendingJobDetails = [];
 
     for(const singleJob of timeBasedJobs) {
-        const readJobDataInstance = getTimeBasedReadInstance(singleJob);
+        const readJobDataInstance = getTimeBasedReadInstance(singleJob.polybaseId);
         pendingJobDetails.push(readJobDataInstance);
     }
 
@@ -40,7 +41,7 @@ export const executeJob = async (jobDetail) => {
     // });
     try {
         const walletClient = createWalletClient({
-            account: privateKeyToAccount(process.env.PRIVATE_KEY),
+            account: privateKeyToAccount("0x" + process.env.PRIVATE_KEY),
             chain: filecoinHyperspace,
             transport: http()
         });
