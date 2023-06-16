@@ -6,12 +6,14 @@ import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md';
 
 const SelectType = ({ setPage, page, formData, setFormData }) => {
   const [isCustomLogic, setIsCustomLogic] = useState(
-    formData.automationType && formData.automationType === 'custom'
+    formData?.automationType && formData?.automationType === 'custom'
       ? true
       : false
   );
   const [isTimeBased, setIsTimeBased] = useState(
-    formData.automationType && formData.automationType === 'time' ? true : false
+    formData?.automationType && formData?.automationType === 'time'
+      ? true
+      : false
   );
 
   const customLogicTypeHandler = () => {
