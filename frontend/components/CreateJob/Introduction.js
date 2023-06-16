@@ -101,6 +101,7 @@ const Introduction = ({ setPage, page }) => {
         className='py-3 w-full bg-[#443592] border-gray-900 border text-white rounded-xl mt-4 hover:bg-[#362a7d]'>
         Get Started
       </button>
+
     </div>
   );
 };

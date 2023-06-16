@@ -2,8 +2,13 @@ import React from 'react';
 import NextButtons from '../UI/NextButtons';
 
 const ContractDetails = ({ setPage, page, formData, setFormData }) => {
+  
   const nextPageHandler = () => {
-    setPage((currPage) => currPage + 1);
+    if (formData.automationType === 'time') {
+      setPage((currPage) => currPage + 1);
+    } else if (formData.automationType === 'custom') {
+      setPage((currPage) => currPage + 2);
+    }
   };
 
   const previousPageHandler = () => {

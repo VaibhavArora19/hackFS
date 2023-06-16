@@ -1,33 +1,46 @@
 import React, { useState } from 'react';
 import { BackendUri } from '@/lib/constants';
+import ProcessingAutomationModal from '../UI/Modals/ProcessingAutomationModal';
 import NextButtons from '../UI/NextButtons';
 
 const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const [cronTime, setCronTime] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const previousPageHandler = () => {
-    setPage((currPage) => currPage - 1);
+    if (formData.automationType === 'time') {
+      setPage((currPage) => currPage - 1);
+    } else if (formData.automationType === 'custom') {
+      setPage((currPage) => currPage - 2);
+    }
   };
   const submitHandler = async () => {
-    setFormData({ ...formData, cronTime: cronTime });
-    console.log('formdata', formData);
-    console.log('cron', cronTime);
-    const data = await fetch(`${BackendUri}/job/timebased`, {
-      method: 'POST',
-      body: JSON.stringify({
-        contractAddress: formData.contractAddress,
-        functionName: formData.function.name,
-        ABI: formData.contractAbi,
-        scheduledBy: formData.adminAddress,
-        params: formData.inputParams,
-        scheduledTime: cronTime ///this needs to be manual time like 4 hrs later or so
-      }),
-      headers: {
-        'Content-Type':'application/json'
-      }
-    });
+    setLoading(true);
+    setShowModal(true);
+    try {
+      const data = await fetch(`${BackendUri}/job/timebased`, {
+        method: 'POST',
+        body: JSON.stringify({
+          contractAddress: formData.contractAddress,
+          functionName: formData.function.name,
+          ABI: formData.contractAbi,
+          scheduledBy: formData.adminAddress,
+          params: formData.inputParams,
+          scheduledTime: cronTime, ///this needs to be manual time like 4 hrs later or so
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    const response = await data.json();
+      const response = await data.json();
+      console.log(response);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -143,6 +156,13 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
         previousPageHandler={previousPageHandler}
         nextPageHandler={submitHandler}
       />
+
+      {showModal && (
+        <ProcessingAutomationModal
+          loading={loading}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };
