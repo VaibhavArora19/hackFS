@@ -3,6 +3,7 @@ import { createPublicClient, createWalletClient, http } from "viem";
 import { filecoinHyperspace } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { sendNotification } from "../push/index.js";
+import { keeperAddress, ABI } from "../lib/constant.js";
 
 export const getAllJobs = async (jobIdArray) => {
 
@@ -118,8 +119,8 @@ export const executeCustomJobs = async (jobDetails) => {
 
         if(isExecutionNeeded) {
             await walletClient.writeContract({
-                address: "Keeper.sol contract address goes here",
-                abi: "ABI goes here",
+                address: keeperAddress,
+                abi: ABI,
                 functionName: 'call',
                 args: [job.contractAddress, job.value, job.data]
             });

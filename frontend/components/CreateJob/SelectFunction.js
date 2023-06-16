@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import NextButtons from '../UI/NextButtons';
 import ParameterInput from './ParameterInput';
 
 const SelectFunction = ({ setPage, page, formData, setFormData }) => {
@@ -33,7 +34,7 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
   };
 
   return (
-    <div>
+    <div className='flex flex-col'>
       <div className='text-white w-[600px] font-Poppins bg-[#181818] py-10 px-10 rounded-xl border border-gray-900 shadow-md'>
         <h2 className='text-2xl font-semibold mb-7'>
           Select Function to Automate
@@ -71,13 +72,15 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
                 </div>
               ))}
             </>
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
-        <p onClick={previousPageHandler}>Prev</p>
-        <p onClick={nextPageHandler}>Next</p>
       </div>
+
+      <NextButtons
+        isNextDisabled={!formData.inputParams.length && !formData.function}
+        nextPageHandler={nextPageHandler}
+        previousPageHandler={previousPageHandler}
+      />
     </div>
   );
 };
