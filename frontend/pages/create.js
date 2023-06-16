@@ -16,6 +16,7 @@ const Create = () => {
     cronTime: '',
     adminAddress: '',
     jobName: '',
+    notification: false,
   });
 
   const steps = ['Basic Details', 'Choose Chain', 'Multichain', 'Deploy'];

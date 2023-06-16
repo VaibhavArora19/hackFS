@@ -24,6 +24,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
               <input
                 onChange={(e) => {
                   setCronTime(e.target.value);
+                  setFormData({ ...formData, cronTime: e.target.value });
                 }}
                 required
                 value={cronTime}
@@ -35,6 +36,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
                 <p
                   onClick={() => {
                     setCronTime('*/15 * * * *');
+                    setFormData({ ...formData, cronTime: '*/15 * * * *' });
                   }}
                   className='text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800'>
                   Every 15 mins
@@ -42,13 +44,15 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
                 <p
                   onClick={() => {
                     setCronTime('0 * * * *');
+                    setFormData({ ...formData, cronTime: '0 * * * *' });
                   }}
                   className='text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800'>
                   Every hour
                 </p>
                 <p
                   onClick={() => {
-                    setCronTime('0 0 1 * *');
+                    setCronTime('0 * * * *');
+                    setFormData({ ...formData, cronTime: '0 * * * *' });
                   }}
                   className='text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800'>
                   First of every month
@@ -56,6 +60,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
                 <p
                   onClick={() => {
                     setCronTime('30 */2 * * 1-5');
+                    setFormData({ ...formData, cronTime: '30 */2 * * 1-5' });
                   }}
                   className='text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800'>
                   30 mins past every two hours on every weekday
@@ -63,6 +68,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
                 <p
                   onClick={() => {
                     setCronTime('0 8,16 * * 1,3,5');
+                    setFormData({ ...formData, cronTime: '0 8,16 * * 1,3,5' });
                   }}
                   className='text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800'>
                   Monday, Wednesday, Friday at 8:00 & 16:00
@@ -93,6 +99,23 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
             type='text'
             className='bg-[#232327] py-2 px-2 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-10'
           />
+
+          <div className='flex gap-2 items-start'>
+            <input
+              required
+              onChange={(event) => {
+                console.log(event.target.checked);
+                setFormData({
+                  ...formData,
+                  notification: event.target.checked,
+                });
+              }}
+              value={formData.notification}
+              type='checkbox'
+              className='bg-[#232327] h-4 w-4 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-10'
+            />
+            <label>Enable notifications for task automation</label>
+          </div>
         </div>
       </div>
       <NextButtons
