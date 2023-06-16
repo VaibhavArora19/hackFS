@@ -10,6 +10,7 @@ export const createSchema = async () => {
         @public
         collection timeBasedJob {
             id: string;
+            name: string;
             contractAddress: string;
             ABI: string;
             functionName: string;
@@ -21,9 +22,10 @@ export const createSchema = async () => {
 
             @index(id, scheduledBy);
 
-            constructor(id: string, contractAddress: string, ABI: string, functionName: string, scheduledBy: string,
+            constructor(id: string, name: string, contractAddress: string, ABI: string, functionName: string, scheduledBy: string,
             params: string[], scheduledTime: number, scheduledAt: number) {
                 this.id = id;
+                this.name = name;
                 this.contractAddress = contractAddress;
                 this.ABI = ABI;
                 this.functionName = functionName;
@@ -42,6 +44,7 @@ export const createSchema = async () => {
         @public
         collection customLogicJob {
             id: string;
+            name: string;
             contractAddress: string;
             ABI: string[]
             value: number;
@@ -52,8 +55,9 @@ export const createSchema = async () => {
 
             @index(id, scheduledBy);
 
-            constructor(id: string, contractAddress: string, ABI: string, scheduledBy: string, value: number, data: string) {
+            constructor(id: string, name: string, contractAddress: string, ABI: string, scheduledBy: string, value: number, data: string) {
                 this.id = id;
+                this.name = name;
                 this.contractAddress = contractAddress;
                 this.ABI = ABI;
                 this.scheduledBy = scheduledBy;

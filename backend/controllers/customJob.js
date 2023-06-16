@@ -1,17 +1,17 @@
 import { ethers } from "ethers";
 import randomstring from "randomstring";
-import { addCustomJobReference, createCustomJobRecord, readCustomBasedJobRecord } from "../helpers/polybaseQueries";
-import Account from "../models/Account";
+import { addCustomJobReference, createCustomJobRecord, readCustomBasedJobRecord } from "../helpers/polybaseQueries.js";
+import Account from "../models/Account.js";
 
 export const postCustomJobHandler = async (req, res, next) => {
-    const { contractAddress, value, data, scheduledBy } = req.body;
+    const { name, contractAddress, value, data, scheduledBy } = req.body;
 
     try {
         const formattedContractAddress = ethers.utils.getAddress(contractAddress);
         const randomId = randomstring.generate() + formattedContractAddress;
         const formattedScheduledBy = ethers.utils.getAddress(scheduledBy);
 
-        const response = await createCustomJobRecord(randomId, formattedContractAddress, JSON.stringify(ABI), formattedScheduledBy, value, data);
+        const response = await createCustomJobRecord(randomId, name, formattedContractAddress, JSON.stringify(ABI), formattedScheduledBy, value, data);
 
         if(response.data ===  null) {
             throw new Error("Creating a custom job failed");

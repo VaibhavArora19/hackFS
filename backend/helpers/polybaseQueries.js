@@ -8,7 +8,7 @@ export const createDB = () => {
     return db;
 };
 
-export const createTimeBasedJobRecord = async (id, contractAddress, ABI, functionName, scheduledBy, params, scheduledTime, scheduledAt) => {
+export const createTimeBasedJobRecord = async (id, name, contractAddress, ABI, functionName, scheduledBy, params, scheduledTime, scheduledAt) => {
     
     const db = createDB();
 
@@ -16,7 +16,7 @@ export const createTimeBasedJobRecord = async (id, contractAddress, ABI, functio
     const col = db.collection("timeBasedJob");
     
     const response = await col.create([
-        id, contractAddress, ABI, functionName, scheduledBy, params, scheduledTime, scheduledAt
+        id, name, contractAddress, ABI, functionName, scheduledBy, params, scheduledTime, scheduledAt
     ]);
 
     return response;
@@ -38,13 +38,13 @@ export const readTimeBasedJobRecordByAddress = async (address) => {
     return response;
 }
 
-export const createCustomJobRecord = async (id, contractAddress, ABI, scheduledBy, value, data) => {
+export const createCustomJobRecord = async (id, name, contractAddress, ABI, scheduledBy, value, data) => {
     const db = createDB();
 
     const col = db.collection("customLogicJob");
 
     const response = await col.create([
-        id, contractAddress, ABI, scheduledBy, value, data
+        id, name, contractAddress, ABI, scheduledBy, value, data
     ]);
 
     return response;

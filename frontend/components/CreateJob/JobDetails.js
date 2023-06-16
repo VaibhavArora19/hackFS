@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BackendUri } from '@/lib/constants';
 
 const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const [cronTime, setCronTime] = useState('');
@@ -6,9 +7,26 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const previousPageHandler = () => {
     setPage((currPage) => currPage - 1);
   };
-  const submitHandler = () => {
+  const submitHandler = async () => {
     setFormData({ ...formData, cronTime: cronTime });
-    console.log('Form Data', formData);
+    console.log('formdata', formData);
+    console.log('cron', cronTime);
+    const data = await fetch(`${BackendUri}/job/timebased`, {
+      method: 'POST',
+      body: JSON.stringify({
+        contractAddress: formData.contractAddress,
+        functionName: formData.function.name,
+        ABI: formData.contractAbi,
+        scheduledBy: formData.adminAddress,
+        params: formData.inputParams,
+        scheduledTime: cronTime ///this needs to be manual time like 4 hrs later or so
+      }),
+      headers: {
+        'Content-Type':'application/json'
+      }
+    });
+
+    const response = await data.json();
   };
 
   return (

@@ -2,6 +2,7 @@ import { getTimeBasedReadInstance, markJobAsExecuted, getCustomJobReadInstance, 
 import { createPublicClient, createWalletClient, http } from "viem";
 import { filecoinHyperspace } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
+import { sendNotification } from "../push/index.js";
 
 export const getAllJobs = async (jobIdArray) => {
 
@@ -54,6 +55,9 @@ export const executeJob = async (jobDetail) => {
 
 
         await markJobAsExecuted(jobDetail.polybaseId);
+
+        sendNotification(jobDetail.scheduledBy, "Cron Job Executed", `Hey! The time based cron job ${jobDetail.name} you scheduled earlier has been executed successfully 🙌. All the information regarding your cron job are as follows :- ${jobDetail}`);
+
     } catch(err) {
         console.log("err is", err);
     }
@@ -64,7 +68,7 @@ export const executeScheduledJobs = async (jobIdArray) => {
     const allJobs = await getAllJobs(jobIdArray);
 
     const scheduledJobs = filterJobs(allJobs);
-    
+
     for(const scheduledJob of scheduledJobs) {
         await executeJob(scheduledJob);
     }
@@ -116,12 +120,13 @@ export const executeCustomJobs = async (jobDetails) => {
             await walletClient.writeContract({
                 address: "Keeper.sol contract address goes here",
                 abi: "ABI goes here",
-                functionName: "call function goes here",
-                args: "args goes here"
+                functionName: 'call',
+                args: [job.contractAddress, job.value, job.data]
             });
 
             await increaseExecutionCount(Date.now() / 1000);
 
+            sendNotification(job.scheduledBy, 'Cron Job Executed', `Hey the custom cron job ${job.name} that you scheduled earlier has been executed successfully 🙌. All the information regarding your cron job are as follows :- ${job}`)
         }
     }
     
