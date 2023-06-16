@@ -1,13 +1,14 @@
 import React from 'react';
-import dummyABI from '../../abi/dummyABI.json';
 import { useState, useEffect } from 'react';
+import ParameterInput from './ParameterInput';
 
-const SelectFunction = () => {
+const SelectFunction = ({ setPage, page, formData, setFormData }) => {
   const [mutableFuncs, setMutableFuncs] = useState([]);
   const [selectedFun, setSelectedFun] = useState(null);
 
   useEffect(() => {
-    const funcs = dummyABI.abi.filter((fun) => {
+    const parsedData = JSON.parse(formData.contractAbi);
+    const funcs = parsedData.filter((fun) => {
       return (
         fun.stateMutability !== 'view' &&
         fun.stateMutability !== 'pure' &&
@@ -18,9 +19,17 @@ const SelectFunction = () => {
   }, []);
 
   const handleSelectChange = (event) => {
-    const selectedFunc = mutableFuncs[event.target.value];
-    console.log(selectedFunc);
-    setSelectedFun(selectedFunc);
+    const selectedFunction = mutableFuncs[event.target.value];
+    setSelectedFun(selectedFunction);
+  };
+
+  const nextPageHandler = () => {
+    setFormData({ ...formData, function: selectedFun });
+    setPage((currPage) => currPage + 1);
+  };
+
+  const previousPageHandler = () => {
+    setPage((currPage) => currPage - 1);
   };
 
   return (
@@ -51,15 +60,13 @@ const SelectFunction = () => {
                 Input Parameters
               </label>
 
-              {selectedFun.inputs?.map((input) => (
+              {selectedFun.inputs?.map((input, index) => (
                 <div className='flex mb-3 items-center'>
-                  <label className='flex-[0.35] text-sm text-purple-800'>
-                    {input.type}
-                  </label>
-                  <input
-                    className='flex-[0.65] py-2 px-2 border rounded bg-[#232327] border-gray-900 text-sm'
-                    type='text'
-                    placeholder={input.name}
+                  <ParameterInput
+                    setFormData={setFormData}
+                    formData={formData}
+                    input={input}
+                    index={index}
                   />
                 </div>
               ))}
@@ -68,6 +75,8 @@ const SelectFunction = () => {
             ''
           )}
         </div>
+        <p onClick={previousPageHandler}>Prev</p>
+        <p onClick={nextPageHandler}>Next</p>
       </div>
     </div>
   );

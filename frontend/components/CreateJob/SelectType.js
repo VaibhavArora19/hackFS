@@ -4,38 +4,33 @@ import { GiBreakingChain, GiAlarmClock } from 'react-icons/gi';
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md';
 // import polygonSvg from '../../public/assets/deploy/polygon.svg';
 
-const SelectType = () => {
-  const [isMultichain, setIsMultichain] = useState(false);
-  const [isSinlgeChain, setIsSingleChain] = useState(false);
-  //   const [openModal, setOpenModal] = useState(false);
-  const [chain, setChain] = useState({
-    chainId: '',
-    chainName: '',
-    chainImg: '',
-  });
+const SelectType = ({ setPage, page, formData, setFormData }) => {
+  const [isCustomLogic, setIsCustomLogic] = useState(
+    formData.automationType && formData.automationType === 'custom'
+      ? true
+      : false
+  );
+  const [isTimeBased, setIsTimeBased] = useState(
+    formData.automationType && formData.automationType === 'time' ? true : false
+  );
 
-  const multichainHandler = () => {
-    setIsSingleChain(false);
-    setIsMultichain(true);
+  const customLogicTypeHandler = () => {
+    setIsTimeBased(false);
+    setIsCustomLogic(true);
   };
 
-  const singleChainHandler = () => {
-    setIsMultichain(false);
-    setIsSingleChain(true);
+  const timeBasedTypeHandler = () => {
+    setIsCustomLogic(false);
+    setIsTimeBased(true);
   };
 
   const nextPageHandler = () => {
-    if (chain.chainName.length) {
-      setFormData({ ...formData, currentDeployChain: chain });
+    if (isCustomLogic) {
+      setFormData({ ...formData, automationType: 'custom' });
+    } else if (isTimeBased) {
+      setFormData({ ...formData, automationType: 'time' });
     }
-
-    if (isSinlgeChain) {
-      setPage((currPage) => currPage + 2);
-    } else if (isMultichain) {
-      setPage((currPage) => currPage + 1);
-    } else {
-      alert('Select single or multiple');
-    }
+    setPage((currPage) => currPage + 1);
   };
 
   const previousPageHandler = () => {
@@ -49,18 +44,18 @@ const SelectType = () => {
       <form className='flex flex-col '>
         <div className='flex gap-10 h-[250px]'>
           <div
-            onClick={singleChainHandler}
+            onClick={timeBasedTypeHandler}
             className={` ${
-              isSinlgeChain ? 'bg-[#443592]' : 'bg-[#363636]'
+              isTimeBased ? 'bg-[#443592]' : 'bg-[#363636]'
             }  p-10 rounded-xl flex-[0.5] cursor-pointer`}>
             <div className='bg-[#171717] rounded-md p-4 w-fit mb-3'>
               <GiAlarmClock
-                className={`${isSinlgeChain && 'text-purple-300'}`}
+                className={`${isTimeBased && 'text-purple-300'}`}
                 size={20}
               />
             </div>
 
-            <p className={`${isSinlgeChain && 'text-purple-300 '} font-medium`}>
+            <p className={`${isTimeBased && 'text-purple-300 '} font-medium`}>
               Time based
             </p>
 
@@ -71,19 +66,19 @@ const SelectType = () => {
           </div>
 
           <div
-            onClick={multichainHandler}
+            onClick={customLogicTypeHandler}
             className={` ${
-              isMultichain ? 'bg-[#281e5e]' : 'bg-[#363636]'
+              isCustomLogic ? 'bg-[#281e5e]' : 'bg-[#363636]'
             } p-10 rounded-xl flex-[0.5] cursor-pointer`}>
             <div className='bg-[#171717] rounded-md p-4 w-fit mb-3'>
               <GiBreakingChain
                 size={20}
-                className={`${isMultichain ? 'text-purple-300' : ''}`}
+                className={`${isCustomLogic ? 'text-purple-300' : ''}`}
               />
             </div>
             <p
               className={`${
-                isMultichain ? 'text-purple-300' : ''
+                isCustomLogic ? 'text-purple-300' : ''
               } font-medium`}>
               Custom Logic
             </p>
@@ -94,6 +89,9 @@ const SelectType = () => {
           </div>
         </div>
       </form>
+
+      <p onClick={nextPageHandler}>Next</p>
+      <p onClick={previousPageHandler}>Prev</p>
     </div>
   );
 };
