@@ -47,7 +47,7 @@ cron.schedule("* * * * *", async () => {
 
     const jobIdArray = await Job.find({});
     await executeScheduledJobs(jobIdArray);
-    // await executeCustomJobs(jobIdArray);
+    await executeCustomJobs(jobIdArray);
 
     closeDatabaseConnection();
 });
