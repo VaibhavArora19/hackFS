@@ -2,7 +2,7 @@ import { Polybase } from "@polybase/client";
 
 export const createDB = () => {
     const db = new Polybase({
-        defaultNamespace: 'hackFS-testing2'
+        defaultNamespace: 'hackFS-testing3'
     });
 
     return db;

@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 import jobRoutes from "./routes/Jobs.js";
 import schemaRoutes from "./routes/Schema.js";
 import Job from "./models/Job.js";
-import { executeScheduledJobs } from "./helpers/Jobs.js";
+import { executeScheduledJobs, executeCustomJobs } from "./helpers/Jobs.js";
 
 const app = express();
 
@@ -47,6 +47,7 @@ cron.schedule("* * * * *", async () => {
 
     const jobIdArray = await Job.find({});
     await executeScheduledJobs(jobIdArray);
+    await executeCustomJobs(jobIdArray);
 
     closeDatabaseConnection();
 });
