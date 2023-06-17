@@ -1,7 +1,8 @@
 import { convertEpochToLocalTime } from '@/utils';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineDeploymentUnit } from 'react-icons/ai';
+import { BsArrowDownShort } from 'react-icons/bs';
 
 const Job = ({
   jobName,
@@ -12,7 +13,10 @@ const Job = ({
   contractAddress,
   schedulerAddress,
   scheduledTime,
+  noOfTimesExectued = 0,
+  listOfTimesFuncExectued = [],
 }) => {
+  const [showList, setShowList] = useState(false);
   return (
     <div className='w-full bg-[#161618]  rounded-xl px-10 py-6'>
       <div className='flex justify-between items-center border-b border-[#2b2b2b] pb-2'>
@@ -54,12 +58,25 @@ const Job = ({
             )}
           </div>
 
-          <div className='flex-[0.33]'>
-            <p className='text-sm text-gray-400 font-semibold mb-2'>Function</p>
-            <p className='text-xl font-semibold text-[#EDEDEF]'>
-              {functionName}
-            </p>
-          </div>
+          {automationType === 'timebased' ? (
+            <div className='flex-[0.33]'>
+              <p className='text-sm text-gray-400 font-semibold mb-2'>
+                Function
+              </p>
+              <p className='text-xl font-semibold text-[#EDEDEF]'>
+                {functionName}
+              </p>
+            </div>
+          ) : (
+            <div className='flex-[0.33]'>
+              <p className='text-sm text-gray-400 font-semibold mb-2'>
+                No. of times executed
+              </p>
+              <p className='text-xl font-semibold text-[#EDEDEF]'>
+                {noOfTimesExectued}
+              </p>
+            </div>
+          )}
 
           <div className='flex-[0.33]'>
             <p className='text-sm text-gray-400 font-semibold mb-2'>
@@ -93,7 +110,10 @@ const Job = ({
             </div>
           </div>
 
-          <div className='flex-[0.33]'>
+          <div
+            className={`${
+              automationType === 'timebased' ? 'flex-[0.33]' : 'flex-[0.6667]'
+            }`}>
             <p className='text-sm text-gray-400 font-semibold mb-2'>
               Scheduler Address
             </p>
@@ -113,17 +133,45 @@ const Job = ({
             </div>
           </div>
 
-          <div className='flex-[0.33]'>
-            <p className='text-sm text-gray-400 font-semibold mb-2'>
-              Scheduled Time
-            </p>
+          {automationType === 'timebased' ? (
+            <div className='flex-[0.33]'>
+              <p className='text-sm text-gray-400 font-semibold mb-2'>
+                Scheduled Time
+              </p>
 
-            <p className='text-xl font-semibold text-[#EDEDEF]'>
-              {convertEpochToLocalTime(scheduledTime)}
-            </p>
-          </div>
+              <p className='text-xl font-semibold text-[#EDEDEF]'>
+                {convertEpochToLocalTime(scheduledTime)}
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
+
+      {automationType !== 'timebased' ? (
+        <div
+          onClick={() => {
+            setShowList(!showList);
+          }}
+          className='mt-4 '>
+          <p className='bg-gray-700 cursor-pointer text-sm text-gray-200 font-semibold py-3 px-4 rounded-md w-full flex justify-between items-center'>
+            Date & time when function executed
+            <span>
+              <BsArrowDownShort size={25} />
+            </span>
+          </p>
+
+          {listOfTimesFuncExectued.length && showList ? (
+            <div className='bg-black/30 mt-2 rounded-md'>
+              {listOfTimesFuncExectued.map((time, index) => (
+                <p className='flex gap-2 items-center py-3 px-3 text-lg font-Poppins font-semibold text-white'>
+                  <span>{index + 1}.</span>
+                  {convertEpochToLocalTime(time)}
+                </p>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 };
