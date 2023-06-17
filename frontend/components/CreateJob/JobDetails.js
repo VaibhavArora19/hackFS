@@ -51,8 +51,8 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
       const response = await data.json();
 
     } else if(formData.automationType === "custom") {
-      // let iface = new ethers.utils.Interface(keeperABI);
-      // iface.encodeFunctionData(formData.function.name, formData.inputParams)
+      let iface = new ethers.utils.Interface(formData.ABI);
+      const encodedData = iface.encodeFunctionData(formData.function.name, formData.inputParams)
 
       const data = await fetch(`${BackendUri}/job/custom`, {
         method: "POST",
@@ -60,7 +60,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
           name: formData.jobName,
           contractAddress: formData.contractAddress,
           value: formData.amount,
-          data: 'dummy data', ///convert the data here
+          data: encodedData,
           scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
         }),
         headers: {
@@ -70,11 +70,11 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
 
       const response = await data.json();
     }
-      // await registerKeeper(
-      //   formData.contractAddress,
-      //   formData.amount,
-      //   pkpWallet
-      // );
+      await registerKeeper(
+        formData.contractAddress,
+        formData.amount,
+        pkpWallet
+      );
 
       setLoading(false);
     } catch (error) {

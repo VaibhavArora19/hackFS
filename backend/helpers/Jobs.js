@@ -119,10 +119,10 @@ export const executeCustomJobs = async (jobDetails) => {
 
         if(isExecutionNeeded) {
             await walletClient.writeContract({
-                address: keeperAddress,
-                abi: ABI,
-                functionName: 'call',
-                args: [job.contractAddress, job.value, job.data]
+                address: job.contractAddress,
+                abi: JSON.parse(job.ABI),
+                functionName: 'executeCall',
+                args: [job.data]
             });
 
             await increaseExecutionCount(Date.now() / 1000);
