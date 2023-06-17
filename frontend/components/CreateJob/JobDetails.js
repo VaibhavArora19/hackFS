@@ -13,6 +13,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const [loading, setLoading] = useState(false);
   const [selectedTimeType, setSelectedTimeType] = useState('custom');
   const [customTime, setCustomTime] = useState(0);
+  const { address } = useAccount();
 
   const previousPageHandler = () => {
     if (formData.automationType === 'time') {
@@ -34,7 +35,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
           contractAddress: formData.contractAddress,
           functionName: formData.function.name,
           ABI: formData.contractAbi,
-          scheduledBy: formData.adminAddress,
+          scheduledBy: address ? address : 'public key of google', // --->@Dinesh.. Add that variable here also
           params: formData.inputParams,
           scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
         }),
