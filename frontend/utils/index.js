@@ -8,7 +8,7 @@ export const getContract = async (signer) => {
 };
 export const registerKeeper = async (address, amount, pkpWallet) => {
   try {
-    if (pkpWallet != "") {
+    if (pkpWallet) {
       await pkpRegisterKeeper(pkpWallet, address, amount);
     } else {
       const amountInWei = ethers.utils.parseEther(amount);
