@@ -13,7 +13,7 @@ const Footer = () => {
       </p>
 
       <div className='flex justify-between font-light text-white items-center'>
-        <p className='text-sm'>&#169; 2023 ExplorerX Inc.</p>
+        <p className='text-sm'>&#169; 2023 FVMCall Inc.</p>
         <ul className='flex gap-8 items-center text-white'>
           <li
             onClick={() => {
