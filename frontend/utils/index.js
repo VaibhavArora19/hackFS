@@ -1,7 +1,7 @@
-import { contractABI, contractAddress } from "@/constants";
-import { waitForTransaction } from "@wagmi/core";
-import { ethers } from "ethers";
-import { writeContract } from "@wagmi/core";
+import { contractABI, contractAddress } from '@/constants';
+import { waitForTransaction } from '@wagmi/core';
+import { ethers } from 'ethers';
+import { writeContract } from '@wagmi/core';
 
 export const getContract = async (signer) => {
   return new ethers.Contract(contractAddress, contractABI, signer);
@@ -15,7 +15,7 @@ export const registerKeeper = async (address, amount, pkpWallet) => {
       const { hash } = await writeContract({
         address: contractAddress,
         abi: contractABI,
-        functionName: "registerKeeper",
+        functionName: 'registerKeeper',
         args: [address, amountInWei],
         value: amountInWei,
       });
@@ -31,7 +31,7 @@ export const registerKeeper = async (address, amount, pkpWallet) => {
 const pkpRegisterKeeper = async (signer, address, amount) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      "https://rpc.ankr.com/filecoin_testnet"
+      'https://rpc.ankr.com/filecoin_testnet'
     );
 
     const amountInWei = ethers.utils.parseEther(amount);
@@ -42,10 +42,10 @@ const pkpRegisterKeeper = async (signer, address, amount) => {
     const data = unsignedTransaction.data;
 
     let nonce = await provider.getTransactionCount(signer.address);
-    console.log("Nonce:", nonce);
+    console.log('Nonce:', nonce);
 
     let feeData = await provider.getFeeData();
-    console.log("Fee Data:", feeData);
+    console.log('Fee Data:', feeData);
 
     const tx = {
       type: 2,
@@ -60,13 +60,13 @@ const pkpRegisterKeeper = async (signer, address, amount) => {
       chainId: 314159,
       data: data,
     };
-    console.log("Transaction Data:", tx);
+    console.log('Transaction Data:', tx);
 
     const signedTx = await signer.signTransaction(tx);
-    console.log("Signed Transaction:", signedTx);
+    console.log('Signed Transaction:', signedTx);
 
     const txHash = ethers.utils.keccak256(signedTx);
-    console.log("Precomputed txHash:", txHash);
+    console.log('Precomputed txHash:', txHash);
 
     provider.sendTransaction(signedTx).then(async (tx) => {
       await tx.wait();
@@ -99,3 +99,20 @@ const pkpRegisterKeeper = async (signer, address, amount) => {
 //     console.log(err);
 //   }
 // };
+
+export function convertEpochToLocalTime(epoch) {
+  // convert epoch seconds to milliseconds
+  const date = new Date(epoch * 1000);
+
+  // options for date format
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+
+  // format the date
+  return date.toLocaleString('en-US', options).replace(', ', ' at ');
+}
