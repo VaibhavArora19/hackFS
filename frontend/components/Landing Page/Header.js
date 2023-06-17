@@ -8,7 +8,6 @@ const Header = () => {
 
   return (
     <section>
-    
       <header className='flex mx-auto mt-3 h-[90vh] overflow-hidden '>
         <div className='flex-[0.4] px-20 flex flex-col justify-center'>
           <h2 className='text-8xl font-Poppins font-medium leading-[105px]'>
@@ -25,7 +24,7 @@ const Header = () => {
 
           <button
             onClick={() => {
-              router.push('/create')
+              router.push('/create');
             }}
             className='bg-[#1e1e1e] flex items-center justify-center gap-2 py-3 w-[230px] mt-10 text-white rounded-xl text-2xl'>
             Launch App{' '}
