@@ -219,7 +219,7 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
             className="bg-[#232327] py-2 px-2 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-4"
           />
           <p className="mb-6 text-gray-400 text-sm ml-2">
-            This amount was used as gas fee for running this job
+            This amount will be used as gas fee for running this job
           </p>
 
           <div className="flex gap-2 items-start">
