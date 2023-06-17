@@ -3,7 +3,6 @@ import { BackendUri } from "@/lib/constants";
 import ProcessingAutomationModal from "../UI/Modals/ProcessingAutomationModal";
 import NextButtons from "../UI/NextButtons";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { registerKeeper } from "@/utils";
 import { getWalletClient } from "@wagmi/core";
@@ -12,6 +11,8 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const [cronTime, setCronTime] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedTimeType, setSelectedTimeType] = useState("custom");
+  const [customTime, setCustomTime] = useState(0);
   const { address } = useAccount();
 
   const previousPageHandler = () => {
@@ -21,9 +22,12 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
       setPage((currPage) => currPage - 2);
     }
   };
-  const submitHandler = async () => {
-    setLoading(true);
+  const submitHandler = () => {
     setShowModal(true);
+  };
+
+  const createJobHandler = async (address, pkpWallet) => {
+    setLoading(true);
     try {
       // const data = await fetch(`${BackendUri}/job/timebased`, {
       //   method: "POST",
@@ -31,9 +35,9 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
       //     contractAddress: formData.contractAddress,
       //     functionName: formData.function.name,
       //     ABI: formData.contractAbi,
-      //     scheduledBy: formData.adminAddress,
+      //     scheduledBy: address ? address : pkpWallet.address, // --->@Dinesh.. Add that variable here also
       //     params: formData.inputParams,
-      //     scheduledTime: cronTime, ///this needs to be manual time like 4 hrs later or so
+      //     scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
       //   }),
       //   headers: {
       //     "Content-Type": "application/json",
@@ -41,20 +45,22 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
       // });
 
       // const response = await data.json();
-      // console.log(response);
-      const walletClient = await getWalletClient();
-      console.log(walletClient);
+
       await registerKeeper(
-        walletClient,
         formData.contractAddress,
         formData.amount,
-        false
+        pkpWallet
       );
+
       setLoading(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
     }
+  };
+
+  const handleSelectChange = (e) => {
+    setSelectedTimeType(e.target.value);
   };
 
   return (
@@ -65,65 +71,105 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
         <div className="flex flex-col ">
           {formData.automationType === "time" ? (
             <>
-              <label className="text-sm text-gray-400">Cron expression</label>
-              <input
-                onChange={(e) => {
-                  setCronTime(e.target.value);
-                  setFormData({ ...formData, cronTime: e.target.value });
-                }}
-                required
-                value={cronTime}
-                type="text"
-                placeholder="* * * * *"
-                className="bg-[#232327] py-2 px-2 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-4"
-              />
-              <div className="flex gap-4 flex-wrap">
-                <p
-                  onClick={() => {
-                    setCronTime("*/15 * * * *");
-                    setFormData({ ...formData, cronTime: "*/15 * * * *" });
-                  }}
-                  className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
-                >
-                  Every 15 mins
-                </p>
-                <p
-                  onClick={() => {
-                    setCronTime("0 * * * *");
-                    setFormData({ ...formData, cronTime: "0 * * * *" });
-                  }}
-                  className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
-                >
-                  Every hour
-                </p>
-                <p
-                  onClick={() => {
-                    setCronTime("0 * * * *");
-                    setFormData({ ...formData, cronTime: "0 * * * *" });
-                  }}
-                  className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
-                >
-                  First of every month
-                </p>
-                <p
-                  onClick={() => {
-                    setCronTime("30 */2 * * 1-5");
-                    setFormData({ ...formData, cronTime: "30 */2 * * 1-5" });
-                  }}
-                  className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
-                >
-                  30 mins past every two hours on every weekday
-                </p>
-                <p
-                  onClick={() => {
-                    setCronTime("0 8,16 * * 1,3,5");
-                    setFormData({ ...formData, cronTime: "0 8,16 * * 1,3,5" });
-                  }}
-                  className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
-                >
-                  Monday, Wednesday, Friday at 8:00 & 16:00
-                </p>
-              </div>
+              <label className="text-sm text-gray-400">
+                Choose time format
+              </label>
+              <select
+                onChange={handleSelectChange}
+                class="bg-[#232327] outline-none border border-gray-900 mb-4  py-3 px-2 text-white text-sm rounded-lg "
+              >
+                <option value={"custom"} selected>
+                  Custom date & time
+                </option>
+                <option value={"cron"}>Cron Time</option>
+              </select>
+
+              {selectedTimeType === "cron" ? (
+                <>
+                  <label className="text-sm text-gray-400">
+                    Cron expression
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setCronTime(e.target.value);
+                      setFormData({ ...formData, cronTime: e.target.value });
+                    }}
+                    required
+                    value={cronTime}
+                    type="text"
+                    placeholder="* * * * *"
+                    className="bg-[#232327] py-2 px-2 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-4"
+                  />
+                  <div className="flex gap-4 flex-wrap">
+                    <p
+                      onClick={() => {
+                        setCronTime("*/15 * * * *");
+                        setFormData({ ...formData, cronTime: "*/15 * * * *" });
+                      }}
+                      className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
+                    >
+                      Every 15 mins
+                    </p>
+                    <p
+                      onClick={() => {
+                        setCronTime("0 * * * *");
+                        setFormData({ ...formData, cronTime: "0 * * * *" });
+                      }}
+                      className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
+                    >
+                      Every hour
+                    </p>
+                    <p
+                      onClick={() => {
+                        setCronTime("0 * * * *");
+                        setFormData({ ...formData, cronTime: "0 * * * *" });
+                      }}
+                      className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
+                    >
+                      First of every month
+                    </p>
+                    <p
+                      onClick={() => {
+                        setCronTime("30 */2 * * 1-5");
+                        setFormData({
+                          ...formData,
+                          cronTime: "30 */2 * * 1-5",
+                        });
+                      }}
+                      className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
+                    >
+                      30 mins past every two hours on every weekday
+                    </p>
+                    <p
+                      onClick={() => {
+                        setCronTime("0 8,16 * * 1,3,5");
+                        setFormData({
+                          ...formData,
+                          cronTime: "0 8,16 * * 1,3,5",
+                        });
+                      }}
+                      className="text-xs py-2 px-2 bg-purple-700 text-purple-300 rounded-md w-fit cursor-pointer hover:bg-purple-800"
+                    >
+                      Monday, Wednesday, Friday at 8:00 & 16:00
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label className="text-sm text-gray-400 mt-4">
+                    Custom date & time
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      const timeString = e.target.value;
+                      const date = new Date(timeString);
+                      setCustomTime(date.getTime());
+                    }}
+                    type="datetime-local"
+                    className="bg-[#232327] py-2 px-2 border border-gray-900 rounded-md placeholder:text-gray-500 text-gray-300 my-1 outline-none mb-4"
+                  />
+                </>
+              )}
             </>
           ) : null}
 
@@ -158,7 +204,6 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
             <input
               required
               onChange={(event) => {
-                console.log(event.target.checked);
                 setFormData({
                   ...formData,
                   notification: event.target.checked,
@@ -172,28 +217,32 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between mt-4">
-        <BsArrowLeftShort
+      {/* <div className='flex items-center justify-between mt-4'> */}
+      <NextButtons
+        previousPageHandler={previousPageHandler}
+        nextPageHandler={submitHandler}
+      />
+      {/* <BsArrowLeftShort
           onClick={previousPageHandler}
           size={45}
-          className={`${"bg-[#271E5D] text-purple-300 hover:bg-[#443592]"}  rounded-full p-1 cursor-pointer`}
-        />
-        {address ? (
+          className={`${'bg-[#271E5D] text-purple-300 hover:bg-[#443592]'}  rounded-full p-1 cursor-pointer`}
+        /> */}
+      {/* {address ? (
           <button
             onClick={submitHandler}
-            className="bg-[#271E5D] text-purple-300 hover:bg-[#443592] rounded-full p-2 cursor-pointer"
-          >
+            className='bg-[#271E5D] text-purple-300 hover:bg-[#443592] rounded-full p-2 cursor-pointer'>
             create Job
           </button>
         ) : (
           <ConnectButton />
-        )}
-      </div>
+        )} */}
+      {/* </div> */}
 
       {showModal && (
         <ProcessingAutomationModal
-          loading={loading}
+          createJobHandler={createJobHandler}
           onClose={() => setShowModal(false)}
+          loading={loading}
         />
       )}
     </div>
