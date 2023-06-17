@@ -11,7 +11,10 @@ const Navbar = () => {
         router.pathname === '/' ? 'bg-white' : 'bg-[#18181A]'
       }`}>
       <p
-        className={`font-semibold font-Poppins text-2xl ${
+        onClick={() => {
+          router.push('/');
+        }}
+        className={`font-semibold font-Poppins text-2xl cursor-pointer ${
           router.pathname === '/' ? 'text-black' : 'text-[#EDEDEF]'
         }`}>
         FVMCall.
