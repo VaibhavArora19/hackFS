@@ -27,15 +27,21 @@ export const getAllDetailedJobs = async (req, res, next) => {
     try {
         const formattedUserAddress = ethers.utils.getAddress(userAddress);
 
-        const timeBasedJobs = await readTimeBasedJobRecordByAddress(formattedUserAddress);
+        const timeBasedJobsData = await readTimeBasedJobRecordByAddress(formattedUserAddress);
+        const timeBasedJobs = timeBasedJobsData?.data.map((job) => {
+            return job?.data;
+        })
 
-        const customJobs = await readCustomJobRecordByAddress(formattedUserAddress);
+        const customJobsData = await readCustomJobRecordByAddress(formattedUserAddress);
+        const customJobs = customJobsData?.data.map((job) => {
+            return job?.data;
+        })
 
-        if(timeBasedJobs.data === null || customElements.data === null) {
+        if(timeBasedJobs === null || customJobs === null) {
             throw new Error("Something went wrong");
         }
-        const allJobs = [...timeBasedJobs, ...customJobs];
-        
+        const allJobs = {timeBasedJobs: timeBasedJobs, customJobs: customJobs};
+
         res.status(200).json({ success: true, response: allJobs });
     }catch(err) {
         next(err);

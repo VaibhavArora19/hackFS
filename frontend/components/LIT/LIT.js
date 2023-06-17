@@ -7,6 +7,7 @@ import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 const RELAY_API_URL = "https://relay-server-staging.herokuapp.com";
 const API_KEY = process.env.NEXT_PUBLIC_LIT_API_KEY;
 import { utils } from "ethers";
+import Loader from "../UI/Loader";
 export default function LIT(props) {
   const [started, setStarted] = useState(false);
 
@@ -231,7 +232,7 @@ export default function LIT(props) {
       const pkpEthersWallet = new PKPEthersWallet({
         controllerAuthSig: authSig,
         pkpPubKey: pkpPublicKey,
-        rpc: "https://filecoin-hyperspace.chainup.net/rpc/v1",
+        rpc: "https://rpc.ankr.com/filecoin_testnet",
       });
 
       await pkpEthersWallet.init();
@@ -246,9 +247,7 @@ export default function LIT(props) {
     <>
       <div className="px-6 py-2">
         {started ? (
-          <div className="w-10 mt-2">
-            <img src="/loading.gif" className="h-6 ml-12"></img>
-          </div>
+          <Loader inComp={true} />
         ) : (
           <GoogleLogin
             onSuccess={handleLoggedInToGoogle}

@@ -19,8 +19,6 @@ const Create = () => {
     notification: false,
   });
 
-  const steps = ['Basic Details', 'Choose Chain', 'Multichain', 'Deploy'];
-
   const PageDisplay = () => {
     if (page === 0) {
       return (

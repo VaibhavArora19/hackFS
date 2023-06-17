@@ -33,14 +33,99 @@ const pkpRegisterKeeper = async (signer, address, amount) => {
     const provider = new ethers.providers.JsonRpcProvider(
       "https://rpc.ankr.com/filecoin_testnet"
     );
-
     const amountInWei = ethers.utils.parseEther(amount);
-
     const contract = await getContract(provider);
     const unsignedTransaction =
       await contract.populateTransaction.registerKeeper(address, amountInWei);
     const data = unsignedTransaction.data;
+    await sendPkpTransaction(data, provider, signer, amountInWei);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
+export const deposit = async (address, amount, pkpWallet) => {
+  try {
+    if (pkpWallet) {
+      await pkpDeposit(pkpWallet, address, amount);
+    } else {
+      const amountInWei = ethers.utils.parseEther(amount);
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "deposit",
+        args: [address],
+        value: amountInWei,
+      });
+      await waitForTransaction({
+        hash: hash,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const pkpDeposit = async (signer, address, amount) => {
+  try {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://rpc.ankr.com/filecoin_testnet"
+    );
+
+    const amountInWei = ethers.utils.parseEther(amount);
+    const contract = await getContract(provider);
+    const unsignedTransaction = await contract.populateTransaction.deposit(
+      address
+    );
+    const data = unsignedTransaction.data;
+    await sendPkpTransaction(data, provider, signer, amountInWei);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const withdraw = async (address, amount, pkpWallet) => {
+  try {
+    if (pkpWallet) {
+      await pkpWithdraw(pkpWallet, address, amount);
+    } else {
+      const amountInWei = ethers.utils.parseEther(amount);
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "deposit",
+        args: [address, amountInWei],
+        value: 0,
+      });
+      await waitForTransaction({
+        hash: hash,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const pkpWithdraw = async (signer, address, amount) => {
+  try {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://rpc.ankr.com/filecoin_testnet"
+    );
+    const amountInWei = ethers.utils.parseEther(amount);
+    const contract = await getContract(provider);
+    const unsignedTransaction = await contract.populateTransaction.withdraw(
+      address,
+      amountInWei
+    );
+    const data = unsignedTransaction.data;
+    await sendPkpTransaction(data, provider, signer, amountInWei);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const sendPkpTransaction = async (data, provider, signer, amountInWei) => {
+  try {
     let nonce = await provider.getTransactionCount(signer.address);
     console.log("Nonce:", nonce);
 
@@ -76,26 +161,19 @@ const pkpRegisterKeeper = async (signer, address, amount) => {
   }
 };
 
-// export const deposit = async (signer, address, amount) => {
-//   try {
-//     const contract = await getContract(signer);
-//     const amountInWei = ethers.utils.parseEther(amount);
-//     const tx = await contract.deposit(address, {
-//       value: amountInWei,
-//     });
-//     await tx.wait();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+export function convertEpochToLocalTime(epoch) {
+  // convert epoch seconds to milliseconds
+  const date = new Date(epoch * 1000);
 
-// export const withdraw = async (signer, address, amount) => {
-//   try {
-//     const contract = await getContract(signer);
-//     const amountInWei = ethers.utils.parseEther(amount);
-//     const tx = await contract.withdraw(address, amountInWei);
-//     await tx.wait();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+  // options for date format
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  // format the date
+  return date.toLocaleString("en-US", options).replace(", ", " at ");
+}

@@ -28,7 +28,7 @@ export const getAllJobs = async (jobIdArray) => {
 export const filterJobs = (jobDetails) => {
 
     const filteredJobs = jobDetails.filter((job) => { 
-        return job.isExecuted === false && scheduledTime <= Math.floor((Date.now())/1000)
+        return job?.isExecuted === false && job?.scheduledTime <= Math.floor((Date.now())/1000)
     })
 
     return filteredJobs;
@@ -55,7 +55,7 @@ export const executeJob = async (jobDetail) => {
         });
 
 
-        await markJobAsExecuted(jobDetail.polybaseId);
+        await markJobAsExecuted(jobDetail.id);
 
         sendNotification(jobDetail.scheduledBy, "Cron Job Executed", `Hey! The time based cron job ${jobDetail.name} you scheduled earlier has been executed successfully 🙌. All the information regarding your cron job are as follows :- ${jobDetail}`);
 
@@ -125,7 +125,7 @@ export const executeCustomJobs = async (jobDetails) => {
                 args: [job.data]
             });
 
-            await increaseExecutionCount(Date.now() / 1000);
+            await increaseExecutionCount(job.id, (Date.now() / 1000));
 
             sendNotification(job.scheduledBy, 'Cron Job Executed', `Hey the custom cron job ${job.name} that you scheduled earlier has been executed successfully 🙌. All the information regarding your cron job are as follows :- ${job}`)
         }
