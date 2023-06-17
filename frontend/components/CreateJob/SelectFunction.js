@@ -1,7 +1,7 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import NextButtons from '../UI/NextButtons';
-import ParameterInput from './ParameterInput';
+import React from "react";
+import { useState, useEffect } from "react";
+import NextButtons from "../UI/NextButtons";
+import ParameterInput from "./ParameterInput";
 
 const SelectFunction = ({ setPage, page, formData, setFormData }) => {
   const [mutableFuncs, setMutableFuncs] = useState([]);
@@ -11,9 +11,9 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
     const parsedData = JSON.parse(formData.contractAbi);
     const funcs = parsedData.filter((fun) => {
       return (
-        fun.stateMutability !== 'view' &&
-        fun.stateMutability !== 'pure' &&
-        fun.type === 'function'
+        fun.stateMutability !== "view" &&
+        fun.stateMutability !== "pure" &&
+        fun.type === "function"
       );
     });
     setMutableFuncs(funcs);
@@ -33,23 +33,24 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
     setPage((currPage) => currPage - 1);
   };
 
+  console.log(selectedFun);
+
   return (
-    <div className='flex flex-col'>
-      <div className='text-white w-[600px] font-Poppins bg-[#181818] py-10 px-10 rounded-xl border border-gray-900 shadow-md'>
-        <h2 className='text-2xl font-semibold mb-7'>
+    <div className="flex flex-col">
+      <div className="text-white w-[600px] font-Poppins bg-[#181818] py-10 px-10 rounded-xl border border-gray-900 shadow-md">
+        <h2 className="text-2xl font-semibold mb-7">
           Select Function to Automate
         </h2>
 
-        <div className='flex flex-col '>
-          <label className='text-sm text-gray-400 mb-1'>Function</label>
+        <div className="flex flex-col ">
+          <label className="text-sm text-gray-400 mb-1">Function</label>
           <select
             onChange={handleSelectChange}
-            class='bg-[#232327] outline-none border border-gray-900 mb-4  py-3 px-2 text-white text-sm rounded-lg '>
+            class="bg-[#232327] outline-none border border-gray-900 mb-4  py-3 px-2 text-white text-sm rounded-lg "
+          >
             <option selected>Select function here</option>
             {mutableFuncs.map((fun, index) => (
-              <option
-                key={index}
-                value={index}>
+              <option key={index} value={index}>
                 {fun.name}
               </option>
             ))}
@@ -57,12 +58,12 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
 
           {selectedFun?.inputs.length ? (
             <>
-              <label className='text-sm text-gray-400 mb-3'>
+              <label className="text-sm text-gray-400 mb-3">
                 Input Parameters
               </label>
 
               {selectedFun.inputs?.map((input, index) => (
-                <div className='flex mb-3 items-center'>
+                <div className="flex mb-3 items-center">
                   <ParameterInput
                     setFormData={setFormData}
                     formData={formData}
@@ -77,7 +78,11 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
       </div>
 
       <NextButtons
-        isNextDisabled={!formData.inputParams.length && !formData.function}
+        isNextDisabled={
+          !formData.inputParams.length &&
+          !(selectedFun?.inputs.length == 0) &&
+          !formData.function
+        }
         nextPageHandler={nextPageHandler}
         previousPageHandler={previousPageHandler}
       />

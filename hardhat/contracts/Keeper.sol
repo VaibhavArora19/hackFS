@@ -27,6 +27,8 @@ contract Keeper is Ownable {
         require(keepers[_contract].owner == msg.sender, "Not owner");
         require(keepers[_contract].balance >= amount, "Insufficient balance");
         keepers[_contract].balance -= amount;
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
     }
 
     function deposit(address _contract) external payable {
