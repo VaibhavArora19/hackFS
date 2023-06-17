@@ -30,45 +30,44 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const createJobHandler = async (address, pkpWallet) => {
     setLoading(true);
     try {
-      if(formData.automationType === "time") {
-      const data = await fetch(`${BackendUri}/job/timebased`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: formData.jobName,
-          contractAddress: formData.contractAddress,
-          functionName: formData.function.name,
-          ABI: formData.contractAbi,
-          scheduledBy: address ? address : pkpWallet.address, 
-          params: formData.inputParams,
-          scheduledTime: customTime, 
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      if (formData.automationType === "time") {
+        const data = await fetch(`${BackendUri}/job/timebased`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: formData.jobName,
+            contractAddress: formData.contractAddress,
+            functionName: formData.function.name,
+            ABI: formData.contractAbi,
+            scheduledBy: address ? address : pkpWallet.address,
+            params: formData.inputParams,
+            scheduledTime: customTime,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      const response = await data.json();
+        const response = await data.json();
+      } else if (formData.automationType === "custom") {
+        // let iface = new ethers.utils.Interface(keeperABI);
+        // iface.encodeFunctionData(formData.function.name, formData.inputParams)
 
-    } else if(formData.automationType === "custom") {
-      // let iface = new ethers.utils.Interface(keeperABI);
-      // iface.encodeFunctionData(formData.function.name, formData.inputParams)
+        const data = await fetch(`${BackendUri}/job/custom`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: formData.jobName,
+            contractAddress: formData.contractAddress,
+            value: formData.amount,
+            data: "dummy data", ///convert the data here
+            scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      const data = await fetch(`${BackendUri}/job/custom`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: formData.jobName,
-          contractAddress: formData.contractAddress,
-          value: formData.amount,
-          data: 'dummy data', ///convert the data here
-          scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const response = await data.json();
-    }
+        const response = await data.json();
+      }
       // await registerKeeper(
       //   formData.contractAddress,
       //   formData.amount,
