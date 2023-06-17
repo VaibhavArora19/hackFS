@@ -33,7 +33,6 @@ const SelectFunction = ({ setPage, page, formData, setFormData }) => {
     setPage((currPage) => currPage - 1);
   };
 
-  console.log(selectedFun);
 
   return (
     <div className="flex flex-col">
