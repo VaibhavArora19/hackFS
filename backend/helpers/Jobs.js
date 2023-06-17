@@ -1,6 +1,6 @@
 import { getTimeBasedReadInstance, markJobAsExecuted, getCustomJobReadInstance, increaseExecutionCount } from "./polybaseQueries.js";
 import { createPublicClient, createWalletClient, http } from "viem";
-import { filecoinHyperspace } from "viem/chains";
+import { filecoinCalibration } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { sendNotification } from "../push/index.js";
 import { keeperAddress, ABI } from "../lib/constant.js";
@@ -37,13 +37,13 @@ export const filterJobs = (jobDetails) => {
 export const executeJob = async (jobDetail) => {
 
     // const publicClient = createPublicClient({
-    //     chain: filecoinHyperspace,
+    //     chain: filecoinCalibration,
     //     transport: http()
     // });
     try {
         const walletClient = createWalletClient({
             account: privateKeyToAccount("0x" + process.env.PRIVATE_KEY),
-            chain: filecoinHyperspace,
+            chain: filecoinCalibration,
             transport: http()
         });
 
@@ -100,13 +100,13 @@ export const executeCustomJobs = async (jobDetails) => {
     const allJobs = await getAllCustomJobs(jobIdArray);
 
     const publicClient = createPublicClient({
-        chain: filecoinHyperspace,
+        chain: filecoinCalibration,
         transport: http()
     });
 
     const walletClient = createWalletClient({
         account: privateKeyToAccount("0x" + process.env.PRIVATE_KEY),
-        chain: filecoinHyperspace,
+        chain: filecoinCalibration,
         transport: http()
     });
 
