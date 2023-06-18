@@ -12,7 +12,7 @@ FVMCall empowers Web3 developers by providing a user-friendly interface to autom
 
 Contrat was deployed on Filecoin Calibration testnet.
 
-[Contract link](https://calibration.filfox.info/en/address/t410ftrmit22yymfzrsxtro3juz7wcybcnpz23dlj3yy)
+[Contract link](https://calibration.filfox.info/en/address/0xC3F51a90Cb9403107462238f66A0442c372c1796)
 
 ### Push
 
