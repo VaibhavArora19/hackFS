@@ -89,21 +89,20 @@ export const getAllCustomJobs = async (jobIdArray) => {
 
     const promiseResponse = await Promise.all(pendingJobDetails);
 
-    const jobDetails = promiseResponse.map((response) => {
+    const jobDetails = promiseResponse?.map((response) => {
         return response.data
     })
 
     return jobDetails;
 };
 
-export const executeCustomJobs = async (jobDetails) => {
+export const executeCustomJobs = async (jobIdArray) => {
     const allJobs = await getAllCustomJobs(jobIdArray);
 
     const publicClient = createPublicClient({
         chain: filecoinCalibration,
         transport: http()
     });
-
     const walletClient = createWalletClient({
         account: privateKeyToAccount("0x" + process.env.PRIVATE_KEY),
         chain: filecoinCalibration,
@@ -117,7 +116,7 @@ export const executeCustomJobs = async (jobDetails) => {
             functionName: 'check',
         })
 
-        if(isExecutionNeeded) {
+        if(isExecutionNeeded === true) {
             await walletClient.writeContract({
                 address: job.contractAddress,
                 abi: JSON.parse(job.ABI),
