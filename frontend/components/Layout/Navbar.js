@@ -60,8 +60,8 @@ const Navbar = () => {
             <p>
               {ensName
                 ? ensName
-                : `${address.slice(0, 5)}...${address.slice(
-                    address.length - 3
+                : `${address?.slice(0, 5)}...${address?.slice(
+                    address?.length - 3
                   )}`}
             </p>
           ) : (
