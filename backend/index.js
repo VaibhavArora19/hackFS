@@ -42,15 +42,15 @@ const connectToDataBaseCron = async () => {
     }
 }
 
-// cron.schedule("* * * * *", async () => {
-//     await connectToDataBaseCron();
+cron.schedule("* * * * *", async () => {
+    await connectToDataBaseCron();
 
-//     const jobIdArray = await Job.find({});
-//     await executeScheduledJobs(jobIdArray);
-//     await executeCustomJobs(jobIdArray);
+    const jobIdArray = await Job.find({});
+    await executeScheduledJobs(jobIdArray);
+    await executeCustomJobs(jobIdArray);
 
-//     closeDatabaseConnection();
-// });
+    closeDatabaseConnection();
+});
 
 app.use((error, req, res, next) => {
     const statusCode = error.statusCode || 500;
