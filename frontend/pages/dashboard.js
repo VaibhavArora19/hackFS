@@ -77,12 +77,12 @@ const Dashboard = () => {
                     automationType='customLogic'
                     contractAddress={job.contractAddress}
                     // functionName="Proxy Call"
-                    isExecuted={true}
+                    isExecuted={job.executionCount > 0 ? true : false}
                     scheduledTime={job.scheduledTime}
                     jobName={job.name}
                     schedulerAddress={job.scheduledBy}
                     registeredDate={job.scheduledAt}
-                    noOfTimesExectued={job.executionTime}
+                    noOfTimesExectued={job.executionCount}
                     listOfTimesFuncExectued={job.executionTimeline}
                   />
                 ))}

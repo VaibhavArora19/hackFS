@@ -44,7 +44,7 @@ export const createCustomJobRecord = async (id, name, contractAddress, ABI, sche
     const col = db.collection("customLogicJob");
 
     const response = await col.create([
-        id, name, contractAddress, ABI, scheduledBy, value, data, (Date.now() / 1000)
+        id, name, contractAddress, ABI, scheduledBy, value, data, Math.floor(Date.now() / 1000)
     ]);
 
     return response;

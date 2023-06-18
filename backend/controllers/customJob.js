@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import randomstring from "randomstring";
 import { addCustomJobReference, createCustomJobRecord, readCustomBasedJobRecord } from "../helpers/polybaseQueries.js";
 import Account from "../models/Account.js";
+import Job from "../models/Job.js";
 
 export const postCustomJobHandler = async (req, res, next) => {
     const { name, contractAddress, value, data, scheduledBy, ABI } = req.body;
