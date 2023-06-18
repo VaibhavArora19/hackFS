@@ -7,6 +7,7 @@ import { keeperAddress, ABI } from "../lib/constant.js";
 
 export const getAllJobs = async (jobIdArray) => {
 
+    try {
     const timeBasedJobs = jobIdArray.filter((jobDetail) => jobDetail.jobType === "timeBased");
 
     const pendingJobDetails = [];
@@ -23,6 +24,10 @@ export const getAllJobs = async (jobIdArray) => {
     })
 
     return jobDetails;
+  
+    }catch(err) {
+        console.log(err)
+    }
 };
 
 export const filterJobs = (jobDetails) => {
@@ -65,13 +70,16 @@ export const executeJob = async (jobDetail) => {
 }
 
 export const executeScheduledJobs = async (jobIdArray) => {
-    
+    try {
     const allJobs = await getAllJobs(jobIdArray);
 
     const scheduledJobs = filterJobs(allJobs);
 
     for(const scheduledJob of scheduledJobs) {
         await executeJob(scheduledJob);
+    }
+    }catch(err) {
+        console.log(err);
     }
 
 
@@ -97,6 +105,7 @@ export const getAllCustomJobs = async (jobIdArray) => {
 };
 
 export const executeCustomJobs = async (jobIdArray) => {
+    try {
     const allJobs = await getAllCustomJobs(jobIdArray);
 
     const publicClient = createPublicClient({
@@ -128,6 +137,9 @@ export const executeCustomJobs = async (jobIdArray) => {
 
             sendNotification(job.scheduledBy, 'Cron Job Executed', `Hey the custom cron job ${job.name} that you scheduled earlier has been executed successfully 🙌. All the information regarding your cron job are as follows :- ${job}`)
         }
+    }
+    } catch(err) {
+        console.log(err);
     }
     
 }

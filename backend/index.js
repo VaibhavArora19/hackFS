@@ -49,7 +49,7 @@ cron.schedule("* * * * *", async () => {
     await executeScheduledJobs(jobIdArray);
     await executeCustomJobs(jobIdArray);
 
-    closeDatabaseConnection();
+    // closeDatabaseConnection();
 });
 
 app.use((error, req, res, next) => {
