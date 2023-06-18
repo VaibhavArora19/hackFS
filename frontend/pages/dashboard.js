@@ -5,7 +5,6 @@ import { useAccount } from "wagmi";
 import LIT from "@/components/LIT/LIT";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BackendUri } from "@/lib/constants";
-import SuccessModal from '@/components/UI/Modals/SuccessModal';
 const Dashboard = () => {
   const [jobData, setJobData] = useState([]);
   const [timeBasedJob, setTimeBasedJob] = useState([]);
@@ -15,19 +14,15 @@ const Dashboard = () => {
   const { address } = useAccount();
 
   useEffect(() => {
-    if(address || pkpWallet) {
-
+    if (address || pkpWallet) {
       async function getJobs() {
-
         await getData();
-      
       }
-      
+
       getJobs();
     }
-  
   }, [address, pkpWallet]);
-  
+
   const getData = async () => {
     try {
       const walletAddress = address ? address : pkpWallet.address;
@@ -39,57 +34,57 @@ const Dashboard = () => {
       console.log("response", response);
       setTimeBasedJob(response.response.timeBasedJobs);
       setCustomJob(response.response.customJobs);
-
-
     } catch (err) {
       console.log(err);
     }
   };
   return (
-    <div className=' min-h-[95vh] bg-[#1C1C1F]'>
-      <div className='w-[95%] mx-auto py-10'>
+    <div className=" min-h-[95vh] bg-[#1C1C1F]">
+      <div className="w-[95%] mx-auto py-10">
         {!(address && pkpWallet) ? (
-          <div className='flex flex-col items-center gap-2 w-fit mx-auto mt-44 bg-black py-20 px-20 rounded-xl shadow-2xl '>
+          <div className="flex flex-col items-center gap-2 w-fit mx-auto mt-44 bg-black py-20 px-20 rounded-xl shadow-2xl ">
             <LIT setPkpWallet={setPkpWallet} />
-            <p className='text-center text-gray-300'>or</p>
+            <p className="text-center text-gray-300">or</p>
             <ConnectButton />
           </div>
         ) : (
           <div>
-            <h2 className='text-xl flex items-center gap-3 font-semibold text-gray-400 font-Poppins '>
+            <h2 className="text-xl flex items-center gap-3 font-semibold text-gray-400 font-Poppins ">
               My Automated Jobs <BsArrowDownShort size={25} />
             </h2>
 
             <div className="flex flex-col gap-5 mt-10 ">
-              {timeBasedJob.length > 0 && timeBasedJob.map((job) => (
-                <Job
-                  automationType="timebased"
-                  contractAddress={job.contractAddress}
-                  functionName={job.functionName}
-                  isExecuted={job.isExecuted}
-                  scheduledTime={job.scheduledTime}
-                  jobName={job.name}
-                  schedulerAddress={job.scheduledBy}
-                  registeredDate={job.scheduledAt}
-                  noOfTimesExectued={0}
-                  listOfTimesFuncExectued={[]}
-                />
-              ))}
+              {timeBasedJob.length > 0 &&
+                timeBasedJob.map((job) => (
+                  <Job
+                    automationType="timebased"
+                    contractAddress={job.contractAddress}
+                    functionName={job.functionName}
+                    isExecuted={job.isExecuted}
+                    scheduledTime={job.scheduledTime}
+                    jobName={job.name}
+                    schedulerAddress={job.scheduledBy}
+                    registeredDate={job.scheduledAt}
+                    noOfTimesExectued={0}
+                    listOfTimesFuncExectued={[]}
+                  />
+                ))}
 
               {/* Isko delete kr dena */}
-              {customJob.length > 0 && customJob.map(job => (
-                <Job
-                automationType="customLogic"
-                contractAddress={job.contractAddress}
-                functionName="Proxy Call"
-                isExecuted={true}
-                scheduledTime={job.scheduledTime}
-                jobName={job.name}
-                schedulerAddress={job.scheduledBy}
-                registeredDate={job.scheduledAt}
-                noOfTimesExectued={job.executionTime}
-                listOfTimesFuncExectued={job.executionTimeline}
-                />
+              {customJob.length > 0 &&
+                customJob.map((job) => (
+                  <Job
+                    automationType="customLogic"
+                    contractAddress={job.contractAddress}
+                    functionName="Proxy Call"
+                    isExecuted={true}
+                    scheduledTime={job.scheduledTime}
+                    jobName={job.name}
+                    schedulerAddress={job.scheduledBy}
+                    registeredDate={job.scheduledAt}
+                    noOfTimesExectued={job.executionTime}
+                    listOfTimesFuncExectued={job.executionTimeline}
+                  />
                 ))}
             </div>
           </div>

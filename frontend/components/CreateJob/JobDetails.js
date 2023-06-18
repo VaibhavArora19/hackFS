@@ -8,10 +8,12 @@ import { registerKeeper } from "@/utils";
 import { getWalletClient } from "@wagmi/core";
 import { ethers } from "ethers";
 import { keeperABI } from "@/constants";
+import SuccessModal from "@/components/UI/Modals/SuccessModal";
 
 const JobDetails = ({ setPage, page, formData, setFormData }) => {
   const [cronTime, setCronTime] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedTimeType, setSelectedTimeType] = useState("custom");
   const [customTime, setCustomTime] = useState(0);
@@ -48,26 +50,29 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
         });
 
         const response = await data.json();
-      } else if(formData.automationType === "custom") {
-      let iface = new ethers.utils.Interface(formData.ABI);
-      const encodedData = iface.encodeFunctionData(formData.function.name, formData.inputParams)
+      } else if (formData.automationType === "custom") {
+        let iface = new ethers.utils.Interface(formData.ABI);
+        const encodedData = iface.encodeFunctionData(
+          formData.function.name,
+          formData.inputParams
+        );
 
-      const data = await fetch(`${BackendUri}/job/custom`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: formData.jobName,
-          contractAddress: formData.contractAddress,
-          value: formData.amount,
-          data: encodedData,
-          scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+        const data = await fetch(`${BackendUri}/job/custom`, {
+          method: "POST",
+          body: JSON.stringify({
+            name: formData.jobName,
+            contractAddress: formData.contractAddress,
+            value: formData.amount,
+            data: encodedData,
+            scheduledTime: customTime, ///this needs to be manual time like 4 hrs later or so - done
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-      const response = await data.json();
-    }
+        const response = await data.json();
+      }
       await registerKeeper(
         formData.contractAddress,
         formData.amount,
@@ -75,6 +80,8 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
       );
 
       setLoading(false);
+      setShowModal(false);
+      setSuccessModal(true);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -267,6 +274,8 @@ const JobDetails = ({ setPage, page, formData, setFormData }) => {
           loading={loading}
         />
       )}
+
+      {successModal && <SuccessModal onClose={() => setSuccessModal(false)} />}
     </div>
   );
 };
