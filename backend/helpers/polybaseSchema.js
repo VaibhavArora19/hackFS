@@ -3,7 +3,7 @@ import { Polybase } from "@polybase/client";
 export const createSchema = async () => {
 
     const db = new Polybase({
-        defaultNamespace: 'hackFS-testing7'
+        defaultNamespace: 'hackFS-testing4'
     });
 
     const createResponse = await db.applySchema(`
@@ -46,7 +46,7 @@ export const createSchema = async () => {
             id: string;
             name: string;
             contractAddress: string;
-            ABI: string[];
+            ABI: string;
             value: number;
             data: string;
             scheduledBy: string;
